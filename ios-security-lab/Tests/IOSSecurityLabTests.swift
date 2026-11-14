@@ -42,7 +42,7 @@ final class IOSSecurityLabTests: XCTestCase {
         XCTAssertEqual(exportedRecord["status"] as? String, "PASS")
         XCTAssertEqual(
             exportedRecord["timestamp"] as? String,
-            "2026-11-14T07:00:00Z"
+            "2026-11-14T07:00:01Z"
         )
     }
 
