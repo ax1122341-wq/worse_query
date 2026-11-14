@@ -74,9 +74,10 @@ jobs:
           name: ios-simulator-builds
           path: ${{ runner.temp }}/ios-simulator-builds.zip
           retention-days: 7
+          if-no-files-found: ignore
 
       - name: Upload XCTest results
-        if: always() && hashFiles('**/*.xcresult') != ''
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ios-security-lab-test-results
