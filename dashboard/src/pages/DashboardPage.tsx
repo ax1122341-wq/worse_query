@@ -11,6 +11,7 @@ import type { RunFilters } from "../types";
 interface DashboardPageProps {
   repository: RunRepository;
   refresh: () => void;
+  onSignOut: () => void;
 }
 
 const initialFilters: RunFilters = {
@@ -58,8 +59,8 @@ export function DashboardPage({ repository, refresh, onSignOut }: DashboardPageP
     if (!file) return;
     try {
       const envelope = parseRunEnvelope(await file.text());
-      repository.importRecords(envelope.records);
-      setMessage(`已导入 ${envelope.records.length} 条记录；刷新页面后导入数据将清除。`);
+      await repository.importRecords(envelope.records);
+      setMessage(`已将 ${envelope.records.length} 条记录保存到 Supabase 云端。`);
       refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "导入失败。");
@@ -132,8 +133,7 @@ export function DashboardPage({ repository, refresh, onSignOut }: DashboardPageP
         <div className="notice">
           <span aria-hidden="true" className="notice-icon">i</span>
           <p>
-            所有内置记录均为合成演示数据。导入记录仅保存在当前页面内存中；
-            导出来源标记不等同于真实性验证。
+            内置记录为合成演示数据；导入记录保存在 Supabase 云端，并由账户权限隔离。导出来源标记不等同于真实性验证。
           </p>
         </div>
         <div className="result-legend" aria-label="测试结果状态说明">
@@ -149,9 +149,10 @@ export function DashboardPage({ repository, refresh, onSignOut }: DashboardPageP
               <button
                 className="button button-quiet"
                 onClick={() => {
-                  repository.clearImported();
-                  setMessage("已清除本页面内存中的导入记录。");
-                  refresh();
+                  void repository.clearImported().then(() => {
+                    setMessage("已清除 Supabase 中当前账户的导入记录。");
+                    refresh();
+                  }).catch((error: unknown) => setMessage(error instanceof Error ? error.message : "清除失败。"));
                 }}
                 type="button"
               >
