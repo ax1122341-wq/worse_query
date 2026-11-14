@@ -103,6 +103,14 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
               type="file"
             />
             <button
+              className="button button-secondary"
+              disabled={records.length === 0}
+              onClick={() => exportRuns(records.map(({ record }) => record))}
+              type="button"
+            >
+              ↓ 导出全部
+            </button>
+            <button
               className="button button-primary"
               disabled={filteredRecords.length === 0}
               onClick={() => exportRuns(filteredRecords.map(({ record }) => record))}
