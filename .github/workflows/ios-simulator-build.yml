@@ -9,6 +9,10 @@ on:
       - 'ios-security-lab/**'
       - '.github/workflows/ios-simulator-build.yml'
 
+concurrency:
+  group: ios-security-lab-{{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-simulator:
     runs-on: macos-15
