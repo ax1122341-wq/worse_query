@@ -37,6 +37,10 @@ The optional `fingerprint` property is displayed only when supplied in imported 
 
 Result statuses are explicit: **PASS** means the authorized test succeeded and its marker matched; **DENIED** is reserved for unavailable authorization; **ERROR** covers malformed records and unrelated test or environment errors.
 
+## iOS result handoff
+
+Lab Writer and Lab Verifier export a version-1 JSON file through the iOS system share sheet. In the Dashboard, select **导入 JSON** to validate that envelope and store its records in Supabase for the currently signed-in account. Use **同步云端** to reload the current account's history after another device or browser has added a record. Individual cloud-imported rows can be deleted without clearing the rest of the account's history; the bulk clear action remains explicit and confirmation-protected.
+
 ## Vercel
 
-Set the Vercel project's Root Directory to `dashboard`, Install Command to `npm install`, Build Command to `npm run build`, and Output Directory to `dist`. The app requires the two environment variables above to connect to Supabase.
+Set the Vercel project's Root Directory to `dashboard`, Install Command to `npm install`, Build Command to `npm run build`, and Output Directory to `dist`. The app requires the two environment variables above.
