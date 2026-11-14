@@ -95,11 +95,12 @@ export function signOut(): void {
 
 async function databaseRequest<T>(path: string, session: SupabaseSession, init: RequestInit = {}): Promise<T> {
   const { url, key } = requireConfig();
+  const activeSession = await restoreSession() ?? session;
   const response = await fetch(`${url}/rest/v1/${path}`, {
     ...init,
     headers: {
       apikey: key,
-      Authorization: `Bearer ${session.access_token}`,
+      Authorization: `Bearer ${activeSession.access_token}`,
       "Content-Type": "application/json",
       ...(init.headers ?? {}),
     },
