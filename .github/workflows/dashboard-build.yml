@@ -1,0 +1,34 @@
+name: Dashboard build
+on:
+  push:
+    branches: [supabase-integration]
+    paths:
+      - "dashboard/**"
+      - ".github/workflows/dashboard-build.yml"
+  pull_request:
+    branches: [supabase-integration]
+    paths:
+      - "dashboard/**"
+      - ".github/workflows/dashboard-build.yml"
+permissions:
+  contents: read
+jobs:
+  build-dashboard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - name: Install dashboard dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build dashboard
+        env:
+          VITE_SUPABASE_URL: https://puyairjblnogzmbrtpmw.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_build_placeholder
+        run: npm run build
