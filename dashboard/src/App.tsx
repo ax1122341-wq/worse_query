@@ -6,7 +6,6 @@ import { SupabaseRunRepository } from "./data-access/SupabaseRunRepository";
 import {
   isSupabaseConfigured,
   loadStoredRuns,
-  readSession,
   restoreSession,
   signIn,
   signOut,
