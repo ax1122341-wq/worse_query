@@ -1,10 +1,11 @@
 -- SECURITY LAB production storage
 -- Run this script in Supabase SQL Editor.
 create table if not exists public.lab_runs (
-  run_id text primary key,
+  run_id text not null,
   user_id uuid not null references auth.users(id) on delete cascade default auth.uid(),
   record jsonb not null,
   created_at timestamptz not null default now(),
+  constraint lab_runs_pkey primary key (user_id, run_id),
   constraint lab_runs_record_object check (jsonb_typeof(record) = 'object')
 );
 
