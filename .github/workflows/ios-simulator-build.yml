@@ -10,7 +10,7 @@ on:
       - '.github/workflows/ios-simulator-build.yml'
 
 concurrency:
-  group: ios-security-lab-{{ github.ref }}
+  group: ${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
