@@ -19,7 +19,7 @@ export class MemoryRunRepository implements RunRepository {
     return [...this.demos, ...this.imported];
   }
 
-  importRecords(records: RunRecord[]): void {
+  async importRecords(records: RunRecord[]): Promise<void> {
     const knownIds = new Set(this.list().map(({ record }) => record.runId));
     const incomingIds = new Set<string>();
 
@@ -36,7 +36,7 @@ export class MemoryRunRepository implements RunRepository {
     ];
   }
 
-  clearImported(): void {
+  async clearImported(): Promise<void> {
     this.imported = [];
   }
 }
