@@ -1,11 +1,20 @@
 # iOS Security Lab dashboard
 
-A client-side React, TypeScript, and Vite dashboard for synthetic App Group test records.
+A React, TypeScript, and Vite dashboard for synthetic iOS security-lab test records, with Supabase Auth and account-isolated cloud persistence.
+
+## Environment variables
+
+Set these in Vercel for the `dashboard` project, for Preview and Production as appropriate:
+
+- `VITE_SUPABASE_URL`: Supabase Project URL.
+- `VITE_SUPABASE_PUBLISHABLE_KEY`: the public `sb_publishable_...` key.
+
+Never use a Supabase secret or service-role key in the browser. The project uses Supabase Auth and RLS to restrict every row to its authenticated owner.
 
 ## Local development
 
 ```sh
-npm ci
+npm install
 npm run dev
 ```
 
@@ -16,14 +25,18 @@ npm run build
 npm run preview
 ```
 
+## Authentication
+
+The dashboard provides email/password sign-up and sign-in with Supabase Auth. If email confirmations are enabled, users must confirm the address before signing in. Configure the Supabase Auth Site URL to the deployed Dashboard origin and add the exact Vercel preview/production origins to the redirect URL allow list.
+
 ## Data and privacy
 
-The initial rows in `src/data/demo-runs.json` are synthetic demonstration records. JSON imports are validated against `src/data/lab-run-v1.schema.json` and saved in the current browser's localStorage under a versioned application key. Imported records survive page refreshes in the same browser and origin. Clearing site data, changing browsers/origins, or disabling browser storage can remove or prevent persistence. Export downloads a JSON file locally. There is no backend, database, telemetry, browser detection, device fingerprinting, or automatic data upload.
+The initial rows in `src/data/demo-runs.json` are synthetic demonstration records and remain local static fixtures. Imported records are validated against the version-1 JSON envelope before they are inserted into `public.lab_runs`. Each row stores the authenticated owner's user ID and the full validated record as JSONB. Row Level Security enforces ownership at the database layer. Records survive sign-in from other devices for the same account.
 
-The optional `fingerprint` property is displayed only when supplied in imported JSON. It is never generated, inferred, or collected from a device. Older schema-version-1 exports without this optional property remain importable. An imported record's source marker describes its declared provenance; it does not verify authenticity.
+The optional `fingerprint` property is displayed only when supplied in imported JSON. It is never generated, inferred, or collected from a device. An imported record's source marker describes its declared provenance; it does not verify authenticity.
 
-Result statuses are explicit: **PASS** means the authorized App Group read succeeded and its marker matched; **DENIED** is reserved for unavailable App Group authorization or an explicit permission-denied read; **ERROR** covers missing fixtures, marker mismatches, malformed records, and unrelated test or environment errors.
+Result statuses are explicit: **PASS** means the authorized test succeeded and its marker matched; **DENIED** is reserved for unavailable authorization; **ERROR** covers malformed records and unrelated test or environment errors.
 
 ## Vercel
 
-Create a Vercel project connected to this repository and set its Root Directory to `dashboard`. Vercel can auto-detect Vite. Use `npm ci` as the install command, `npm run build` as the build command, and `dist` as the output directory. `vercel.json` rewrites test-detail routes to the client app. No environment variables or backend services are required.
+Set the Vercel project's Root Directory to `dashboard`, Install Command to `npm install`, Build Command to `npm run build`, and Output Directory to `dist`. The app requires the two environment variables above to connect to Supabase.
