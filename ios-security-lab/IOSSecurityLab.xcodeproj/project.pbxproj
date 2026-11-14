@@ -21,6 +21,7 @@
 		A1000000000000000000000C /* TestResultStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* TestResultStatus.swift */; };
 		A1000000000000000000000D /* LabConfiguration.swift in Tests */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* LabConfiguration.swift */; };
 		A1000000000000000000000E /* AppGroupStore.swift in Tests */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* AppGroupStore.swift */; };
+		A1000000000000000000000F /* SupabaseCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* SupabaseCloudSync.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +107,7 @@
 			children = (
 				A20000000000000000000008 /* VerifierApp.swift */,
 				A20000000000000000000009 /* VerifierView.swift */,
+				A20000000000000000000013 /* SupabaseCloudSync.swift */,
 				A20000000000000000000011 /* VerifierApp.entitlements */,
 			);
 		};
@@ -242,6 +244,7 @@
 				A1000000000000000000000C /* TestResultStatus.swift in Sources */,
 				A10000000000000000000008 /* VerifierApp.swift in Sources */,
 				A10000000000000000000009 /* VerifierView.swift in Sources */,
+				A1000000000000000000000F /* SupabaseCloudSync.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +406,7 @@
 		A20000000000000000000010 /* WriterApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WriterApp.entitlements; sourceTree = "<group>"; };
 		A20000000000000000000011 /* VerifierApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VerifierApp.entitlements; sourceTree = "<group>"; };
 		A20000000000000000000012 /* TestResultStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestResultStatus.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* SupabaseCloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseCloudSync.swift; sourceTree = "<group>"; };
 /* End PBXFileReference addition section */
 	};
 	rootObject = A40000000000000000000001 /* Project object */;
