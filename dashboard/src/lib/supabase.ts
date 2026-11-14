@@ -109,8 +109,9 @@ async function databaseRequest<T>(path: string, session: SupabaseSession, init: 
     const payload = await response.json().catch(() => ({})) as { message?: string; details?: string };
     throw new Error(payload.message ?? payload.details ?? `数据库请求失败（${response.status}）。`);
   }
-  if (response.status === 204) return undefined as T;
-  return response.json() as Promise<T>;
+  const responseText = await response.text();
+  if (!responseText) return undefined as T;
+  return JSON.parse(responseText) as T;
 }
 
 interface StoredRun {
