@@ -49,10 +49,11 @@ jobs:
               -project IOSSecurityLab.xcodeproj \
               -target "$target" \
               -destination 'generic/platform=iOS Simulator' \
-              -derivedDataPath "$RUNNER_TEMP/PackageDerivedData-$target" \
+              CONFIGURATION_BUILD_DIR="$RUNNER_TEMP/PackageProducts-$target" \
+              OBJROOT="$RUNNER_TEMP/PackageIntermediates-$target" \
               CODE_SIGNING_ALLOWED=NO \
               build
-            ditto "$RUNNER_TEMP/PackageDerivedData-$target/Build/Products/Debug-iphonesimulator/$target.app" "$RUNNER_TEMP/ios-simulator-builds/$target.app"
+            ditto "$RUNNER_TEMP/PackageProducts-$target/$target.app" "$RUNNER_TEMP/ios-simulator-builds/$target.app"
           done
           ditto -c -k --sequesterRsrc --keepParent "$RUNNER_TEMP/ios-simulator-builds" "$RUNNER_TEMP/ios-simulator-builds.zip"
 
