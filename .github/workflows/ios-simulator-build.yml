@@ -37,12 +37,20 @@ jobs:
 
       - name: Package simulator build outputs
         if: success()
+        working-directory: ios-security-lab
         run: |
           mkdir -p "$RUNNER_TEMP/ios-simulator-builds"
-          ditto "$RUNNER_TEMP/DerivedData/Build/Products/Debug-iphonesimulator/WriterApp.app" "$RUNNER_TEMP/ios-simulator-builds/WriterApp.app"
-          ditto "$RUNNER_TEMP/DerivedData/Build/Products/Debug-iphonesimulator/VerifierApp.app" "$RUNNER_TEMP/ios-simulator-builds/VerifierApp.app"
-          cd "$RUNNER_TEMP"
-          zip -r ios-simulator-builds.zip ios-simulator-builds
+          for target in WriterApp VerifierApp; do
+            xcodebuild \
+              -project IOSSecurityLab.xcodeproj \
+              -target "$target" \
+              -destination 'generic/platform=iOS Simulator' \
+              -derivedDataPath "$RUNNER_TEMP/PackageDerivedData-$target" \
+              CODE_SIGNING_ALLOWED=NO \
+              build
+            ditto "$RUNNER_TEMP/PackageDerivedData-$target/Build/Products/Debug-iphonesimulator/$target.app" "$RUNNER_TEMP/ios-simulator-builds/$target.app"
+          done
+          ditto -c -k --sequesterRsrc --keepParent "$RUNNER_TEMP/ios-simulator-builds" "$RUNNER_TEMP/ios-simulator-builds.zip"
 
       - name: Build for physical iOS devices (unsigned validation)
         working-directory: ios-security-lab
