@@ -35,6 +35,7 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
   const [busy, setBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const records = repository.list();
+  const cloudRecords = records.filter(({ loadedFrom }) => loadedFrom === "json-import");
   const browsers = useMemo(
     () => [...new Set(records.map(({ record }) => record.browser).filter(
       (browser): browser is string => browser !== null,
@@ -53,19 +54,47 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
     setMessage("");
   };
 
+  const syncCloud = async () => {
+    setBusy(true);
+    try {
+      await repository.refresh();
+      refresh();
+      const count = repository.list().filter(({ loadedFrom }) => loadedFrom === "json-import").length;
+      setMessage("已从 Supabase 刷新云端历史记录，共 " + count + " 条。");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "同步云端记录失败。");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const importFile = async (file: File | undefined) => {
     if (!file) return;
     setBusy(true);
     try {
       const envelope = parseRunEnvelope(await file.text());
       await repository.importRecords(envelope.records);
-      setMessage(`已导入并保存到 Supabase 云端 ${envelope.records.length} 条记录。`);
+      setMessage("已导入并保存到 Supabase 云端 " + envelope.records.length + " 条记录。");
       refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "导入失败。");
     } finally {
       setBusy(false);
       if (fileInput.current) fileInput.current.value = "";
+    }
+  };
+
+  const deleteOneImported = async (runId: string) => {
+    if (!window.confirm("确定删除这条云端记录吗？此操作只删除当前账户的这一条记录。")) return;
+    setBusy(true);
+    try {
+      await repository.deleteImported(runId);
+      setMessage("已删除云端记录：" + runId);
+      refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "删除云端记录失败。");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -112,6 +141,9 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
               open={searchOpen}
               value={filters.query}
             />
+            <button className="button button-secondary" disabled={busy} onClick={() => void syncCloud()} type="button">
+              <span aria-hidden="true">↻</span> 同步云端
+            </button>
             <button className="button button-secondary" disabled={busy} onClick={() => fileInput.current?.click()} type="button">
               <span aria-hidden="true">↑</span> 导入 JSON
             </button>
@@ -145,8 +177,8 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
         <div className="notice">
           <span aria-hidden="true" className="notice-icon">i</span>
           <p>
-            内置记录为合成演示数据。导入记录保存在 Supabase 数据库中，并按登录账户隔离；
-            导出来源标记不等同于真实性验证。
+            内置记录为合成演示数据。iOS Writer / Verifier 导出的验证结果 JSON 可在此导入，
+            保存至 Supabase 并按登录账户隔离；导出来源标记不等同于真实性验证。
           </p>
         </div>
         <div className="result-legend" aria-label="测试结果状态说明">
@@ -158,9 +190,9 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
         {message && (
           <div aria-live="polite" className="import-message">
             <span>{message}</span>
-            {records.some(({ loadedFrom }) => loadedFrom === "json-import") && (
+            {cloudRecords.length > 0 && (
               <button className="button button-quiet" disabled={busy} onClick={() => void clearImported()} type="button">
-                清除云端导入记录
+                清除全部云端导入记录
               </button>
             )}
           </div>
@@ -183,13 +215,13 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
           </div>
           <div className="record-origin-summary">
             <span><i className="origin-dot demo-dot" />演示数据：{records.filter(({ record }) => record.recordType === "demo").length}</span>
-            <span><i className="origin-dot imported-dot" />云端导入：{records.filter(({ loadedFrom }) => loadedFrom === "json-import").length}</span>
+            <span><i className="origin-dot imported-dot" />云端导入：{cloudRecords.length}</span>
             <span>筛选结果：{filteredRecords.length}</span>
           </div>
           {advancedOpen && (
             <AdvancedFilters browsers={browsers} filters={filters} onChange={setFilters} onReset={resetFilters} channels={channels} />
           )}
-          <RunTable records={filteredRecords} />
+          <RunTable records={filteredRecords} onDeleteImported={(runId) => void deleteOneImported(runId)} />
         </section>
         <footer className="page-footer"><span>iOS Security Lab</span><span>合成 App Group 测试数据展示 · Supabase 云端持久化</span></footer>
       </section>
