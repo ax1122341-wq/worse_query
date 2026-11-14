@@ -35,6 +35,18 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
+      - name: Run unit tests on iPhone Simulator
+        working-directory: ios-security-lab
+        run: |
+          xcodebuild \
+            -project IOSSecurityLab.xcodeproj \
+            -scheme IOSSecurityLab \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            -resultBundlePath "$RUNNER_TEMP/IOSSecurityLabTests.xcresult" \
+            CODE_SIGNING_ALLOWED=NO \
+            test
+
       - name: Package simulator build outputs
         if: success()
         run: |
@@ -50,4 +62,12 @@ jobs:
         with:
           name: ios-simulator-builds
           path: ${{ runner.temp }}/ios-simulator-builds.zip
+          retention-days: 7
+
+      - name: Upload XCTest results
+        if: always() && hashFiles('**/*.xcresult') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-security-lab-test-results
+          path: ${{ runner.temp }}/IOSSecurityLabTests.xcresult
           retention-days: 7
