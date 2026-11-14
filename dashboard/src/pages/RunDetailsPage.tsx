@@ -26,7 +26,7 @@ export function RunDetailsPage({ repository }: RunDetailsPageProps) {
         <Link className="back-link" to="/">← 返回测试记录</Link>
         <div className="empty-state">
           <h1>找不到这条记录</h1>
-          <p>记录可能已被清除，或本地浏览器存储不可用。</p>
+          <p>记录可能已被清除，或当前账户不具有访问权限。</p>
         </div>
       </main>
     );
@@ -37,14 +37,14 @@ export function RunDetailsPage({ repository }: RunDetailsPageProps) {
     <main className="details-shell">
       <header className="details-topbar">
         <Link className="back-link" to="/">← 返回测试记录</Link>
-        <span className="environment-pill"><span /> 本地演示</span>
+        <span className="environment-pill"><span /> Supabase 云端</span>
       </header>
       <div className="details-heading">
         <div><span className="eyebrow">测试详情</span><h1>运行时间线</h1><p>记录 ID <code>{record.runId}</code></p></div>
         <div className="details-badges">
           <span className={`status-badge status-${record.status.toLowerCase()}`}><span aria-hidden="true" />{record.status}</span>
           <span className={`record-marker ${record.recordType === "demo" ? "marker-demo" : "marker-test"}`}>
-            {record.recordType === "demo" ? "演示数据" : "实验测试记录"}{run.loadedFrom === "json-import" ? " · 已导入" : ""}
+            {record.recordType === "demo" ? "演示数据" : "实验测试记录"}{run.loadedFrom === "json-import" ? " · 云端" : ""}
           </span>
         </div>
       </div>
