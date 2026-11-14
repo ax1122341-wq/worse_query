@@ -69,6 +69,7 @@ jobs:
             build
 
       - name: Run unit tests on iPhone Simulator
+        timeout-minutes: 12
         working-directory: ios-security-lab
         run: |
           xcodebuild \
@@ -81,13 +82,13 @@ jobs:
             test
 
       - name: Upload simulator build artifacts
-        if: success()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ios-simulator-builds
           path: ${{ runner.temp }}/ios-simulator-builds.zip
           retention-days: 7
-          if-no-files-found: ignore
+          if-no-files-found: error
 
       - name: Upload XCTest results
         if: always()
