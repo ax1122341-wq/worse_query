@@ -35,6 +35,17 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
+      - name: Build for physical iOS devices (unsigned validation)
+        working-directory: ios-security-lab
+        run: |
+          xcodebuild \
+            -project IOSSecurityLab.xcodeproj \
+            -scheme IOSSecurityLab \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/DeviceDerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
       - name: Run unit tests on iPhone Simulator
         working-directory: ios-security-lab
         run: |
