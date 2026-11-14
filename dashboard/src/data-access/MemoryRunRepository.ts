@@ -24,13 +24,17 @@ export class LocalStorageRunRepository implements RunRepository {
     return [...this.demos, ...this.imported];
   }
 
+  refresh(): void {
+    this.imported = this.readImported();
+  }
+
   importRecords(records: RunRecord[]): void {
     const knownIds = new Set(this.list().map(({ record }) => record.runId));
     const incomingIds = new Set<string>();
 
     for (const record of records) {
       if (knownIds.has(record.runId) || incomingIds.has(record.runId)) {
-        throw new Error(`重复的测试记录 ID：${record.runId}`);
+        throw new Error("重复的测试记录 ID：" + record.runId);
       }
       incomingIds.add(record.runId);
     }
@@ -39,6 +43,12 @@ export class LocalStorageRunRepository implements RunRepository {
       ...this.imported,
       ...records.map((record) => ({ record, loadedFrom: "json-import" as const })),
     ];
+    this.persist(next);
+    this.imported = next;
+  }
+
+  deleteImported(runId: string): void {
+    const next = this.imported.filter(({ record }) => record.runId !== runId);
     this.persist(next);
     this.imported = next;
   }
