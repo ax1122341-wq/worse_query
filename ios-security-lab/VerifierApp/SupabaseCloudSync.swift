@@ -175,19 +175,19 @@ final class SupabaseCloudSync {
             kSecAttrService as String: keychainService,
             kSecAttrAccount as String: sessionAccount
         ]
-        let attributes: [String: Any] = [
-            kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        let updateAttributes: [String: Any] = [
+            kSecValueData as String: data
         ]
 
-        let updateStatus = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        let updateStatus = SecItemUpdate(query as CFDictionary, updateAttributes as CFDictionary)
         if updateStatus == errSecSuccess { return }
         guard updateStatus == errSecItemNotFound else {
             throw LabCloudSyncError.keychain(updateStatus)
         }
 
         var addQuery = query
-        attributes.forEach { addQuery[$0.key] = $0.value }
+        addQuery[kSecValueData as String] = data
+        addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
         guard addStatus == errSecSuccess else {
             throw LabCloudSyncError.keychain(addStatus)
