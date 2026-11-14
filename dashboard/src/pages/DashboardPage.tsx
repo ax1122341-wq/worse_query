@@ -9,8 +9,10 @@ import type { RunRepository } from "../data-access/RunRepository";
 import type { RunFilters } from "../types";
 
 interface DashboardPageProps {
-  repository: RunRepository & { persistenceAvailable?: boolean };
+  repository: RunRepository;
   refresh: () => void;
+  userEmail: string;
+  onSignOut: () => void;
 }
 
 const initialFilters: RunFilters = {
@@ -25,11 +27,12 @@ const initialFilters: RunFilters = {
   maxDuration: "",
 };
 
-export function DashboardPage({ repository, refresh }: DashboardPageProps) {
+export function DashboardPage({ repository, refresh, userEmail, onSignOut }: DashboardPageProps) {
   const [filters, setFilters] = useState(initialFilters);
   const [searchOpen, setSearchOpen] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(true);
   const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const records = repository.list();
   const browsers = useMemo(
@@ -52,15 +55,31 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
 
   const importFile = async (file: File | undefined) => {
     if (!file) return;
+    setBusy(true);
     try {
       const envelope = parseRunEnvelope(await file.text());
-      repository.importRecords(envelope.records);
-      setMessage(`已导入并保存 ${envelope.records.length} 条记录。`);
+      await repository.importRecords(envelope.records);
+      setMessage(`已导入并保存到 Supabase 云端 ${envelope.records.length} 条记录。`);
       refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "导入失败。");
     } finally {
+      setBusy(false);
       if (fileInput.current) fileInput.current.value = "";
+    }
+  };
+
+  const clearImported = async () => {
+    if (!window.confirm("确定清除当前账户保存的全部云端导入记录吗？此操作不可撤销。")) return;
+    setBusy(true);
+    try {
+      await repository.clearImported();
+      setMessage("已清除当前账户的云端导入记录。");
+      refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "清除失败。");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -72,8 +91,9 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
           <span className="brand-copy"><strong>SECURITY LAB</strong><small>测试控制台</small></span>
         </a>
         <div className="topbar-meta">
-          <span className="environment-pill"><span /> 本地演示</span>
-          <span className="avatar">L</span>
+          <span className="environment-pill"><span /> Supabase 云端</span>
+          <span className="user-email">{userEmail}</span>
+          <button className="button button-quiet" onClick={onSignOut} type="button">退出登录</button>
         </div>
       </header>
 
@@ -83,7 +103,7 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
           <div>
             <span className="eyebrow">IOS SECURITY LAB</span>
             <h1>测试记录</h1>
-            <p>查看合成演示数据与明确导入的实验测试记录。</p>
+            <p>查看合成演示数据与当前账户的云端实验测试记录。</p>
           </div>
           <div className="heading-actions">
             <SearchControl
@@ -92,7 +112,7 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
               open={searchOpen}
               value={filters.query}
             />
-            <button className="button button-secondary" onClick={() => fileInput.current?.click()} type="button">
+            <button className="button button-secondary" disabled={busy} onClick={() => fileInput.current?.click()} type="button">
               <span aria-hidden="true">↑</span> 导入 JSON
             </button>
             <input
@@ -125,15 +145,10 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
         <div className="notice">
           <span aria-hidden="true" className="notice-icon">i</span>
           <p>
-            所有内置记录均为合成演示数据。导入记录保存在当前浏览器本地存储中；
+            内置记录为合成演示数据。导入记录保存在 Supabase 数据库中，并按登录账户隔离；
             导出来源标记不等同于真实性验证。
           </p>
         </div>
-        {repository.persistenceAvailable === false && (
-          <div className="import-message" role="status">
-            当前浏览器不允许本地存储；导入记录仅在本次页面会话中保留。
-          </div>
-        )}
         <div className="result-legend" aria-label="测试结果状态说明">
           <span><b className="legend-pass">PASS</b>授权读取成功且标记匹配</span>
           <span><b className="legend-denied">DENIED</b>App Group 授权不可用</span>
@@ -144,27 +159,16 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
           <div aria-live="polite" className="import-message">
             <span>{message}</span>
             {records.some(({ loadedFrom }) => loadedFrom === "json-import") && (
-              <button
-                className="button button-quiet"
-                onClick={() => {
-                  try {
-                    repository.clearImported();
-                    setMessage("已清除本地保存的导入记录。");
-                    refresh();
-                  } catch (error) {
-                    setMessage(error instanceof Error ? error.message : "清除失败。");
-                  }
-                }}
-                type="button"
-              >
-                清除导入记录
+              <button className="button button-quiet" disabled={busy} onClick={() => void clearImported()} type="button">
+                清除云端导入记录
               </button>
             )}
           </div>
         )}
+        {busy && <div className="import-message" role="status">正在与 Supabase 同步…</div>}
 
         <section className="stats-grid" aria-label="记录概览">
-          <article className="stat-card"><span>全部记录</span><strong>{records.length}</strong><small>演示与导入记录</small></article>
+          <article className="stat-card"><span>全部记录</span><strong>{records.length}</strong><small>演示与云端记录</small></article>
           <article className="stat-card"><span>PASS</span><strong>{records.filter(({ record }) => record.status === "PASS").length}</strong><small><span className="stat-dot green" />读取成功且标记匹配</small></article>
           <article className="stat-card"><span>DENIED</span><strong>{records.filter(({ record }) => record.status === "DENIED").length}</strong><small><span className="stat-dot amber" />授权不可用</small></article>
           <article className="stat-card"><span>ERROR</span><strong>{records.filter(({ record }) => record.status === "ERROR").length}</strong><small><span className="stat-dot red" />测试或环境错误</small></article>
@@ -179,7 +183,7 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
           </div>
           <div className="record-origin-summary">
             <span><i className="origin-dot demo-dot" />演示数据：{records.filter(({ record }) => record.recordType === "demo").length}</span>
-            <span><i className="origin-dot imported-dot" />JSON 导入：{records.filter(({ loadedFrom }) => loadedFrom === "json-import").length}</span>
+            <span><i className="origin-dot imported-dot" />云端导入：{records.filter(({ loadedFrom }) => loadedFrom === "json-import").length}</span>
             <span>筛选结果：{filteredRecords.length}</span>
           </div>
           {advancedOpen && (
@@ -187,7 +191,7 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
           )}
           <RunTable records={filteredRecords} />
         </section>
-        <footer className="page-footer"><span>iOS Security Lab</span><span>仅用于合成 App Group 权限测试数据展示</span></footer>
+        <footer className="page-footer"><span>iOS Security Lab</span><span>合成 App Group 测试数据展示 · Supabase 云端持久化</span></footer>
       </section>
     </main>
   );
