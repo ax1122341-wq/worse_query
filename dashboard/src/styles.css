@@ -356,3 +356,19 @@ input[type="date"] { color-scheme: dark; }
   .timeline-event-top { flex-direction: column; }
   .timeline-event time { text-align: left; }
 }
+
+.run-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.row-delete {
+  min-height: 28px;
+  padding: 0 7px;
+  color: #e5a3a3;
+  font-size: 10px;
+}
+.row-delete:hover:not(:disabled) {
+  color: #ffd0d0;
+  background: rgba(166, 68, 68, 0.12);
+}
