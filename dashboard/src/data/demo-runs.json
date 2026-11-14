@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "recordType": "demo",
+      "source": "demo-fixture",
+      "runId": "demo-run-001",
+      "status": "PASS",
+      "timestamp": "2026-10-12T09:30:00.842Z",
+      "browser": "Safari（演示）",
+      "channel": "Writer → Verifier",
+      "anonymousId": "demo-anon-a4c21f",
+      "durationMs": 842,
+      "firstVisit": "2026-10-12T09:30:00.000Z",
+      "events": [
+        {
+          "timestamp": "2026-10-12T09:30:00.000Z",
+          "role": "writer",
+          "action": "创建合成测试文件",
+          "status": "INFO",
+          "details": "仅写入实验 App Group 中的固定测试文件。"
+        },
+        {
+          "timestamp": "2026-10-12T09:30:00.842Z",
+          "role": "verifier",
+          "action": "校验合成测试内容",
+          "status": "PASS",
+          "details": "读取并匹配预期标记。"
+        }
+      ]
+    },
+    {
+      "recordType": "demo",
+      "source": "demo-fixture",
+      "runId": "demo-run-002",
+      "status": "PASS",
+      "timestamp": "2026-10-13T14:05:13.260Z",
+      "browser": "不适用（原生应用演示）",
+      "channel": "Writer → Verifier",
+      "anonymousId": "demo-anon-72bd09",
+      "durationMs": 1260,
+      "firstVisit": "2026-10-13T14:05:12.000Z",
+      "events": [
+        {
+          "timestamp": "2026-10-13T14:05:12.000Z",
+          "role": "writer",
+          "action": "创建合成测试文件",
+          "status": "INFO",
+          "details": "演示记录；未读取设备或浏览器信息。"
+        },
+        {
+          "timestamp": "2026-10-13T14:05:13.260Z",
+          "role": "verifier",
+          "action": "校验合成测试内容",
+          "status": "PASS",
+          "details": "固定测试文件内容符合预期。"
+        }
+      ]
+    },
+    {
+      "recordType": "demo",
+      "source": "demo-fixture",
+      "runId": "demo-run-003",
+      "status": "DENIED",
+      "timestamp": "2026-10-16T08:18:43.504Z",
+      "browser": "Firefox（演示）",
+      "channel": "Verifier",
+      "anonymousId": "demo-anon-f0c553",
+      "durationMs": 504,
+      "firstVisit": "2026-10-16T08:18:43.000Z",
+      "events": [
+        {
+          "timestamp": "2026-10-16T08:18:43.504Z",
+          "role": "verifier",
+          "action": "执行格式校验演示",
+          "status": "DENIED",
+          "details": "演示授权拒绝结果：实验 App Group 授权不可用；未尝试其他路径。"
+        }
+      ]
+    },
+    {
+      "recordType": "demo",
+      "source": "demo-fixture",
+      "runId": "demo-run-004",
+      "status": "ERROR",
+      "timestamp": "2026-10-20T17:42:07.742Z",
+      "browser": null,
+      "channel": "Writer → Verifier",
+      "anonymousId": "demo-anon-9d81e7",
+      "durationMs": 1742,
+      "firstVisit": "2026-10-20T17:42:06.000Z",
+      "events": [
+        {
+          "timestamp": "2026-10-20T17:42:06.000Z",
+          "role": "writer",
+          "action": "创建合成测试文件",
+          "status": "INFO",
+          "details": "写入成功。"
+        },
+        {
+          "timestamp": "2026-10-20T17:42:07.742Z",
+          "role": "verifier",
+          "action": "读取合成测试文件",
+          "status": "ERROR",
+          "details": "演示环境错误：预期测试文件不存在；未将其归类为授权拒绝。"
+        }
+      ]
+    }
+  ]
+}

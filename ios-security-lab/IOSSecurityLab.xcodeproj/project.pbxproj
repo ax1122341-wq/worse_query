@@ -1,0 +1,409 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* LabConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* LabConfiguration.swift */; };
+		A10000000000000000000002 /* LabEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* LabEvent.swift */; };
+		A10000000000000000000003 /* LabRunRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* LabRunRecord.swift */; };
+		A10000000000000000000004 /* AppGroupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* AppGroupStore.swift */; };
+		A10000000000000000000005 /* LabRunExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* LabRunExporter.swift */; };
+		A10000000000000000000006 /* WriterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* WriterApp.swift */; };
+		A10000000000000000000007 /* WriterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* WriterView.swift */; };
+		A10000000000000000000008 /* VerifierApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* VerifierApp.swift */; };
+		A10000000000000000000009 /* VerifierView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* VerifierView.swift */; };
+		A1000000000000000000000A /* IOSSecurityLabTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* IOSSecurityLabTests.swift */; };
+		A1000000000000000000000B /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* XCTest.framework */; };
+		A1000000000000000000000C /* TestResultStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* TestResultStatus.swift */; };
+		A1000000000000000000000D /* LabConfiguration.swift in Tests */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* LabConfiguration.swift */; };
+		A1000000000000000000000E /* AppGroupStore.swift in Tests */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* AppGroupStore.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A30000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A40000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A50000000000000000000001;
+			remoteInfo = WriterApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* LabConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabConfiguration.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* LabEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabEvent.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* LabRunRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabRunRecord.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* AppGroupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupStore.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* LabRunExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabRunExporter.swift; sourceTree = "<group>"; };
+		A20000000000000000000006 /* WriterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriterApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000007 /* WriterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriterView.swift; sourceTree = "<group>"; };
+		A20000000000000000000008 /* VerifierApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifierApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000009 /* VerifierView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifierView.swift; sourceTree = "<group>"; };
+		A2000000000000000000000A /* IOSSecurityLabTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSSecurityLabTests.swift; sourceTree = "<group>"; };
+		A2000000000000000000000B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		A2000000000000000000000C /* WriterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WriterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000000000000000000000D /* VerifierApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VerifierApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000000000000000000000E /* IOSSecurityLabTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IOSSecurityLabTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A60000000000000000000001 /* Writer Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A60000000000000000000002 /* Verifier Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A60000000000000000000003 /* Test Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000000000000000000000B /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A70000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A70000000000000000000002 /* Shared */,
+				A70000000000000000000003 /* WriterApp */,
+				A70000000000000000000004 /* VerifierApp */,
+				A70000000000000000000005 /* Tests */,
+				A70000000000000000000006 /* Products */,
+				A2000000000000000000000B /* XCTest.framework */,
+			);
+			sourceTree = "<group>";
+		};
+		A70000000000000000000002 /* Shared */ = {
+			isa = PBXGroup;
+			path = Shared;
+			sourceTree = "<group>";
+			children = (
+				A20000000000000000000001 /* LabConfiguration.swift */,
+				A20000000000000000000002 /* LabEvent.swift */,
+				A20000000000000000000003 /* LabRunRecord.swift */,
+				A20000000000000000000004 /* AppGroupStore.swift */,
+				A20000000000000000000005 /* LabRunExporter.swift */,
+				A20000000000000000000012 /* TestResultStatus.swift */,
+			);
+		};
+		A70000000000000000000003 /* WriterApp */ = {
+			isa = PBXGroup;
+			path = WriterApp;
+			sourceTree = "<group>";
+			children = (
+				A20000000000000000000006 /* WriterApp.swift */,
+				A20000000000000000000007 /* WriterView.swift */,
+				A20000000000000000000010 /* WriterApp.entitlements */,
+			);
+		};
+		A70000000000000000000004 /* VerifierApp */ = {
+			isa = PBXGroup;
+			path = VerifierApp;
+			sourceTree = "<group>";
+			children = (
+				A20000000000000000000008 /* VerifierApp.swift */,
+				A20000000000000000000009 /* VerifierView.swift */,
+				A20000000000000000000011 /* VerifierApp.entitlements */,
+			);
+		};
+		A70000000000000000000005 /* Tests */ = {
+			isa = PBXGroup;
+			path = Tests;
+			sourceTree = "<group>";
+			children = (
+				A2000000000000000000000A /* IOSSecurityLabTests.swift */,
+			);
+		};
+		A70000000000000000000006 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+			children = (
+				A2000000000000000000000C /* WriterApp.app */,
+				A2000000000000000000000D /* VerifierApp.app */,
+				A2000000000000000000000E /* IOSSecurityLabTests.xctest */,
+			);
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000001 /* WriterApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000001 /* Build configuration list for PBXNativeTarget "WriterApp" */;
+			buildPhases = (
+				A90000000000000000000001 /* Writer Sources */,
+				A60000000000000000000001 /* Writer Frameworks */,
+				AA00000000000000000001 /* Writer Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = WriterApp;
+			productName = WriterApp;
+			productReference = A2000000000000000000000C /* WriterApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A50000000000000000000002 /* VerifierApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000002 /* Build configuration list for PBXNativeTarget "VerifierApp" */;
+			buildPhases = (
+				A90000000000000000000002 /* Verifier Sources */,
+				A60000000000000000000002 /* Verifier Frameworks */,
+				AA00000000000000000002 /* Verifier Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = VerifierApp;
+			productName = VerifierApp;
+			productReference = A2000000000000000000000D /* VerifierApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A50000000000000000000003 /* IOSSecurityLabTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000003 /* Build configuration list for PBXNativeTarget "IOSSecurityLabTests" */;
+			buildPhases = (
+				A90000000000000000000003 /* Test Sources */,
+				A60000000000000000000003 /* Test Frameworks */,
+				AA00000000000000000003 /* Test Resources */,
+			);
+			buildRules = ();
+			dependencies = (
+				AB00000000000000000001 /* PBXTargetDependency */,
+			);
+			name = IOSSecurityLabTests;
+			productName = IOSSecurityLabTests;
+			productReference = A2000000000000000000000E /* IOSSecurityLabTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A40000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					A50000000000000000000001 = {CreatedOnToolsVersion = 16.0; };
+					A50000000000000000000002 = {CreatedOnToolsVersion = 16.0; };
+					A50000000000000000000003 = {CreatedOnToolsVersion = 16.0; };
+				};
+			};
+			buildConfigurationList = A80000000000000000000004 /* Build configuration list for PBXProject "IOSSecurityLab" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
+			mainGroup = A70000000000000000000001;
+			productRefGroup = A70000000000000000000006 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A50000000000000000000001 /* WriterApp */,
+				A50000000000000000000002 /* VerifierApp */,
+				A50000000000000000000003 /* IOSSecurityLabTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA00000000000000000001 /* Writer Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		AA00000000000000000002 /* Verifier Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		AA00000000000000000003 /* Test Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A90000000000000000000001 /* Writer Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* LabConfiguration.swift in Sources */,
+				A10000000000000000000002 /* LabEvent.swift in Sources */,
+				A10000000000000000000003 /* LabRunRecord.swift in Sources */,
+				A10000000000000000000004 /* AppGroupStore.swift in Sources */,
+				A10000000000000000000005 /* LabRunExporter.swift in Sources */,
+				A1000000000000000000000C /* TestResultStatus.swift in Sources */,
+				A10000000000000000000006 /* WriterApp.swift in Sources */,
+				A10000000000000000000007 /* WriterView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A90000000000000000000002 /* Verifier Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* LabConfiguration.swift in Sources */,
+				A10000000000000000000002 /* LabEvent.swift in Sources */,
+				A10000000000000000000003 /* LabRunRecord.swift in Sources */,
+				A10000000000000000000004 /* AppGroupStore.swift in Sources */,
+				A10000000000000000000005 /* LabRunExporter.swift in Sources */,
+				A1000000000000000000000C /* TestResultStatus.swift in Sources */,
+				A10000000000000000000008 /* VerifierApp.swift in Sources */,
+				A10000000000000000000009 /* VerifierView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A90000000000000000000003 /* Test Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000000000000000000000D /* LabConfiguration.swift in Tests */,
+				A10000000000000000000002 /* LabEvent.swift in Sources */,
+				A10000000000000000000003 /* LabRunRecord.swift in Sources */,
+				A10000000000000000000004 /* AppGroupStore.swift in Sources */,
+				A10000000000000000000005 /* LabRunExporter.swift in Sources */,
+				A1000000000000000000000C /* TestResultStatus.swift in Sources */,
+				A1000000000000000000000A /* IOSSecurityLabTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AB00000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A50000000000000000000001 /* WriterApp */;
+			targetProxy = A30000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AC00000000000000000001 /* Project Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AC00000000000000000002 /* Project Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		AC00000000000000000003 /* Writer Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = WriterApp/WriterApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Lab Writer";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ios-security-lab.writer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AC00000000000000000004 /* Writer Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = WriterApp/WriterApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Lab Writer";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ios-security-lab.writer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AC00000000000000000005 /* Verifier Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = VerifierApp/VerifierApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Lab Verifier";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ios-security-lab.verifier;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AC00000000000000000006 /* Verifier Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = VerifierApp/VerifierApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Lab Verifier";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ios-security-lab.verifier;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AC00000000000000000007 /* Tests Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ios-security-lab.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WriterApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WriterApp";
+				TEST_TARGET_NAME = WriterApp;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AC00000000000000000008 /* Tests Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ios-security-lab.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WriterApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WriterApp";
+				TEST_TARGET_NAME = WriterApp;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A80000000000000000000001 /* Writer Configurations */ = {isa = XCConfigurationList; buildConfigurations = (AC00000000000000000003 /* Writer Debug */, AC00000000000000000004 /* Writer Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A80000000000000000000002 /* Verifier Configurations */ = {isa = XCConfigurationList; buildConfigurations = (AC00000000000000000005 /* Verifier Debug */, AC00000000000000000006 /* Verifier Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A80000000000000000000003 /* Test Configurations */ = {isa = XCConfigurationList; buildConfigurations = (AC00000000000000000007 /* Tests Debug */, AC00000000000000000008 /* Tests Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A80000000000000000000004 /* Project Configurations */ = {isa = XCConfigurationList; buildConfigurations = (AC00000000000000000001 /* Project Debug */, AC00000000000000000002 /* Project Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+/* Begin PBXFileReference addition section */
+		A20000000000000000000010 /* WriterApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WriterApp.entitlements; sourceTree = "<group>"; };
+		A20000000000000000000011 /* VerifierApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VerifierApp.entitlements; sourceTree = "<group>"; };
+		A20000000000000000000012 /* TestResultStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestResultStatus.swift; sourceTree = "<group>"; };
+/* End PBXFileReference addition section */
+	};
+	rootObject = A40000000000000000000001 /* Project object */;
+}

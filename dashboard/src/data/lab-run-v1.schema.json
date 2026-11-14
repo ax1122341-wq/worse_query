@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "iOS Security Lab Run Export",
+  "type": "object",
+  "required": ["schemaVersion", "records"],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "recordType",
+          "source",
+          "runId",
+          "status",
+          "timestamp",
+          "browser",
+          "channel",
+          "anonymousId",
+          "durationMs",
+          "firstVisit",
+          "events"
+        ],
+        "properties": {
+          "recordType": {
+            "enum": ["demo", "test"]
+          },
+          "source": {
+            "enum": ["demo-fixture", "ios-security-lab"]
+          },
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": ["PASS", "DENIED", "ERROR"]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "browser": {
+            "type": ["string", "null"]
+          },
+          "channel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "anonymousId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "firstVisit": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "timestamp",
+                "role",
+                "action",
+                "status",
+                "details"
+              ],
+              "properties": {
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "role": {
+                  "enum": ["writer", "verifier", "dashboard"]
+                },
+                "action": {
+                  "type": "string"
+                },
+                "status": {
+                  "enum": ["PASS", "DENIED", "ERROR", "INFO"]
+                },
+                "details": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
