@@ -37,9 +37,15 @@ The optional `fingerprint` property is displayed only when supplied in imported 
 
 Result statuses are explicit: **PASS** means the authorized test succeeded and its marker matched; **DENIED** is reserved for unavailable authorization; **ERROR** covers malformed records and unrelated test or environment errors.
 
+## History and analytics
+
+The history table supports client-side pagination (10, 25, or 50 rows per page) after applying filters. The 14-day chart groups records by their recorded timestamp and displays PASS, DENIED, and ERROR counts. The dashboard keeps synthetic demo rows visually distinct from authenticated cloud-imported records.
+
 ## iOS result handoff
 
 Lab Writer and Lab Verifier export a version-1 JSON file through the iOS system share sheet. In the Dashboard, select **导入 JSON** to validate that envelope and store its records in Supabase for the currently signed-in account. Use **同步云端** to reload the current account's history after another device or browser has added a record. Individual cloud-imported rows can be deleted without clearing the rest of the account's history; the bulk clear action remains explicit and confirmation-protected.
+
+The native Verifier app can optionally sign in to Supabase and upload a result after a user-selected JSON file has been verified. It uses the public publishable key, an authenticated user access token kept in the iOS Keychain, and the same owner-scoped RLS policies. No service-role key is shipped in either native app or the dashboard.
 
 ## Vercel
 
