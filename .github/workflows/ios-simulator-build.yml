@@ -97,7 +97,7 @@ jobs:
             ditto "$APP_PATH" "$IPA_ROOT/Payload/$target.app"
             (
               cd "$IPA_ROOT"
-              ditto -c -k --sequesterRsrc Payload "$RUNNER_TEMP/ios-device-ipas/$target-unsigned.ipa"
+              ditto -c -k --sequesterRsrc --keepParent Payload "$RUNNER_TEMP/ios-device-ipas/$target-unsigned.ipa"
             )
           done
 
