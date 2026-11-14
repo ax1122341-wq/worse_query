@@ -29,7 +29,7 @@ export function RunDetailsPage({ repository }: RunDetailsPageProps) {
         <Link className="back-link" to="/">← 返回测试记录</Link>
         <div className="empty-state">
           <h1>找不到这条记录</h1>
-          <p>记录可能已清除，或页面刷新后导入数据已从内存中移除。</p>
+          <p>记录可能已删除，或当前账户无权访问。</p>
         </div>
       </main>
     );
@@ -41,7 +41,7 @@ export function RunDetailsPage({ repository }: RunDetailsPageProps) {
     <main className="details-shell">
       <header className="details-topbar">
         <Link className="back-link" to="/">← 返回测试记录</Link>
-        <span className="environment-pill"><span /> 本地演示</span>
+        <span className="environment-pill"><span /> Supabase 云端</span>
       </header>
       <div className="details-heading">
         <div>
