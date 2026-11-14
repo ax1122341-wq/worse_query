@@ -9,6 +9,12 @@ on:
     paths:
       - 'ios-security-lab/**'
       - '.github/workflows/ios-simulator-build.yml'
+  pull_request:
+    branches:
+      - supabase-integration
+    paths:
+      - 'ios-security-lab/**'
+      - '.github/workflows/ios-simulator-build.yml'
 
 permissions:
   contents: read
