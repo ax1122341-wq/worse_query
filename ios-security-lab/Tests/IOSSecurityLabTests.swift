@@ -9,14 +9,21 @@ final class IOSSecurityLabTests: XCTestCase {
             status: "INFO",
             details: "Synthetic fixture only."
         )
+        let verifierEvent = LabEvent(
+            timestamp: "2026-11-14T07:00:01Z",
+            role: "verifier",
+            action: "synthetic-verify",
+            status: "PASS",
+            details: "Synthetic marker matched."
+        )
         let record = LabRunRecord(
             runId: "test-run",
             status: .pass,
-            timestamp: "2026-11-14T07:00:00Z",
-            channel: "Writer",
+            timestamp: "2026-11-14T07:00:01Z",
+            channel: "Verifier",
             durationMs: 120,
             firstVisit: "2026-11-14T07:00:00Z",
-            events: [event]
+            events: [event, verifierEvent]
         )
 
         let url = try LabRunExporter.export(record)
