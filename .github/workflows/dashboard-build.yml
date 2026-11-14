@@ -11,9 +11,10 @@ on:
       - "dashboard/**"
       - ".github/workflows/dashboard-build.yml"
 permissions:
-  contents: read
+  contents: write
 jobs:
   build-dashboard:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -27,7 +28,18 @@ jobs:
           cache-dependency-path: dashboard/package-lock.json
       - name: Install dashboard dependencies
         run: npm install --no-audit --no-fund
+      - name: Commit refreshed dependency lockfile
+        working-directory: .
+        run: |
+          if ! git diff --quiet -- dashboard/package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add dashboard/package-lock.json
+            git commit -m "chore: refresh dashboard npm lockfile"
+            git push
+          fi
       - name: Build dashboard
+        working-directory: dashboard
         env:
           VITE_SUPABASE_URL: https://puyairjblnogzmbrtpmw.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_build_placeholder
