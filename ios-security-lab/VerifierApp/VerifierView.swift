@@ -1,131 +1,96 @@
 import SwiftUI
+import UniformTypeIdentifiers
+
+private struct SyntheticFixture: Decodable {
+    let schemaVersion: Int
+    let marker: String
+    let runId: String
+    let createdAt: String
+}
 
 struct VerifierView: View {
-    @State private var status = "等待 Writer 创建合成测试文件"
+    @State private var status = "等待导入 Writer 导出的合成 JSON"
+    @State private var showingImporter = false
     @State private var exportURL: URL?
-    private let store = AppGroupStore()
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("验证 App Group 权限") {
-                    Text("只读取 Writer 在实验 App Group 中创建的固定合成 JSON 文件。")
+                Section("手动导入并验证") {
+                    Text("先在 Writer 中生成 JSON 并保存到“文件”，再从这里选择该文件。")
                         .foregroundStyle(.secondary)
-                    Button("读取并验证合成文件", action: verifyFixture)
-                    Button("重置测试文件", role: .destructive, action: resetFixture)
+                    Button("选择合成 JSON 文件") {
+                        showingImporter = true
+                    }
                 }
-
-                Section("状态") {
-                    Text(status)
-                        .textSelection(.enabled)
+                Section("验证结果") {
+                    Text(status).textSelection(.enabled)
                     if let exportURL {
                         ShareLink(item: exportURL) {
-                            Label("导出合成测试记录 JSON", systemImage: "square.and.arrow.up")
+                            Label("导出验证结果 JSON", systemImage: "square.and.arrow.up")
                         }
                     }
                 }
-
                 Section("安全边界") {
-                    Text("此应用不枚举目录，不请求其他应用的容器，也不访问 App Group 之外的路径。")
+                    Text("仅处理用户通过系统文件选择器主动选择的 JSON 文件，不扫描目录或访问其他应用数据。")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
             .navigationTitle("Lab Verifier")
+            .fileImporter(
+                isPresented: $showingImporter,
+                allowedContentTypes: [.json],
+                allowsMultipleSelection: false,
+                onCompletion: handleImport
+            )
         }
     }
 
-    private func verifyFixture() {
+    private func handleImport(_ result: Result<[URL], Error>) {
         let start = Date()
         let firstVisit = LabConfiguration.timestamp(start)
         do {
-            let fixture = try store.readFixture()
-            let matches = fixture.marker == LabConfiguration.fixtureMarker
+            let urls = try result.get()
+            guard let url = urls.first else {
+                status = "ERROR：没有选择文件。"
+                return
+            }
+            let hasAccess = url.startAccessingSecurityScopedResource()
+            defer {
+                if hasAccess { url.stopAccessingSecurityScopedResource() }
+            }
+            let data = try Data(contentsOf: url)
+            let fixture = try JSONDecoder().decode(SyntheticFixture.self, from: data)
+            let matches = fixture.schemaVersion == LabConfiguration.exportSchemaVersion
+                && fixture.marker == LabConfiguration.fixtureMarker
+                && !fixture.runId.isEmpty
             let resultStatus: TestResultStatus = matches ? .pass : .error
-            let resultTimestamp = LabConfiguration.timestamp()
-            let writerEvent = LabEvent(
-                timestamp: fixture.createdAt,
-                role: "writer",
-                action: "创建合成测试文件",
-                status: "INFO",
-                details: "Writer 在授权的实验 App Group 中创建固定测试文件。"
-            )
-            let verifierEvent = LabEvent(
-                timestamp: resultTimestamp,
+            let timestamp = LabConfiguration.timestamp()
+            let details = matches
+                ? "用户选择的合成 JSON 文件格式正确，标记匹配。"
+                : "文件已读取，但版本、标记或运行 ID 不符合预期。"
+            let event = LabEvent(
+                timestamp: timestamp,
                 role: "verifier",
-                action: "验证合成测试文件",
+                action: "验证用户导入的合成 JSON",
                 status: resultStatus.rawValue,
-                details: matches
-                    ? "App Group 读取成功且合成标记匹配。"
-                    : "读取成功，但合成标记与预期不匹配。"
+                details: details
             )
             let record = LabRunRecord(
                 runId: fixture.runId,
                 status: resultStatus,
-                timestamp: resultTimestamp,
-                channel: "Verifier",
+                timestamp: timestamp,
+                channel: "Verifier-File-Import",
                 durationMs: Int(Date().timeIntervalSince(start) * 1_000),
                 firstVisit: fixture.createdAt,
-                events: [writerEvent, verifierEvent]
+                events: [event]
             )
             exportURL = try LabRunExporter.export(record)
-            status = "\(resultStatus.rawValue)：\(verifierEvent.details) 测试运行 ID：\(fixture.runId)"
-        } catch let error as AppGroupStoreError {
-            exportFailureRecord(
-                error,
-                resultStatus: error.resultStatus,
-                start: start,
-                firstVisit: firstVisit
-            )
+            status = "\(resultStatus.rawValue)：\(details) 运行 ID：\(fixture.runId)"
         } catch {
-            exportFailureRecord(
-                error,
-                resultStatus: .error,
-                start: start,
-                firstVisit: firstVisit
-            )
-        }
-    }
-
-    private func exportFailureRecord(
-        _ error: Error,
-        resultStatus: TestResultStatus,
-        start: Date,
-        firstVisit: String
-    ) {
-        let resultTimestamp = LabConfiguration.timestamp()
-        let event = LabEvent(
-            timestamp: resultTimestamp,
-            role: "verifier",
-            action: "验证合成测试文件",
-            status: resultStatus.rawValue,
-            details: error.localizedDescription
-        )
-        let record = LabRunRecord(
-            runId: UUID().uuidString.lowercased(),
-            status: resultStatus,
-            timestamp: resultTimestamp,
-            channel: "Verifier",
-            durationMs: Int(Date().timeIntervalSince(start) * 1_000),
-            firstVisit: firstVisit,
-            events: [event]
-        )
-        do {
-            exportURL = try LabRunExporter.export(record)
-            status = "\(resultStatus.rawValue)：\(error.localizedDescription)"
-        } catch {
+            status = "ERROR：导入或验证失败：\(error.localizedDescription)"
             exportURL = nil
-            status = "ERROR：无法导出测试结果：\(error.localizedDescription)"
-        }
-    }
-
-    private func resetFixture() {
-        do {
-            try store.removeFixture()
-            exportURL = nil
-            status = "已重置固定测试文件。"
-        } catch {
-            status = "重置失败：\(error.localizedDescription)"
         }
     }
 }
