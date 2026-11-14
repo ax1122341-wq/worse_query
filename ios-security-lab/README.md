@@ -18,9 +18,29 @@ The test uses the public `FileManager.containerURL(forSecurityApplicationGroupId
 
 The exported JSON envelope has `schemaVersion: 1`; run completion and event timestamps use ISO 8601.
 
-## Signing setup
+## Signing and Apple account prerequisites
 
-The project uses the placeholder group `group.com.example.ios-security-lab` and example bundle identifiers (`com.example.ios-security-lab.writer` and `com.example.ios-security-lab.verifier`). Register the App Group for your Apple Developer team, update the group identifier and bundle identifiers consistently in both app targets and entitlements, and configure signing before running on a device.
+The repository intentionally uses placeholders:
+- App Group: `group.com.example.ios-security-lab`
+- Writer bundle ID: `com.example.ios-security-lab.writer`
+- Verifier bundle ID: `com.example.ios-security-lab.verifier`
+
+These are examples, not registered identifiers. Before a physical-device installation:
+
+1. Use an Apple Developer team that is eligible to register and provision the App Groups capability.
+2. Register one App Group identifier for that team in Certificates, Identifiers & Profiles.
+3. Register both app identifiers under the same team and enable the same App Groups capability for each.
+4. Replace the placeholder App Group identifier consistently in `Shared/LabConfiguration.swift` and both `.entitlements` files. Replace the example bundle identifiers in the two app targets with identifiers registered to that team.
+5. Sign both targets with that same team and valid provisioning profiles, then install both apps on the same supported iPhone.
+
+A free Personal Team is useful for basic Xcode device testing, but it does not guarantee access to every advanced capability. If the App Groups capability cannot be enabled for the team, this two-app test cannot be completed on a physical iPhone with that team. Do not try to work around Apple's entitlement checks.
+
+## Build artifact limitations
+
+- The GitHub Actions simulator `.app` output is for an iOS simulator, not a physical iPhone.
+- The generic iOS device build is unsigned validation output; it is not an installable IPA.
+- A successful compile or simulator test does not prove that the Apple team has granted the App Groups entitlement.
+- This repository does not contain Apple account credentials, signing certificates, private keys, or provisioning profiles. Never paste Apple passwords, verification codes, or private signing keys into chat or commit them to the repository.
 
 ## Test flow
 
