@@ -25,7 +25,7 @@ const initialFilters: RunFilters = {
   maxDuration: "",
 };
 
-export function DashboardPage({ repository, refresh }: DashboardPageProps) {
+export function DashboardPage({ repository, refresh, onSignOut }: DashboardPageProps) {
   const [filters, setFilters] = useState(initialFilters);
   const [searchOpen, setSearchOpen] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(true);
@@ -79,8 +79,8 @@ export function DashboardPage({ repository, refresh }: DashboardPageProps) {
           </span>
         </a>
         <div className="topbar-meta">
-          <span className="environment-pill"><span /> 本地演示</span>
-          <span className="avatar">L</span>
+          <span className="environment-pill"><span /> Supabase 云端</span>
+          <button className="button button-quiet" onClick={onSignOut} type="button">退出登录</button>
         </div>
       </header>
 
