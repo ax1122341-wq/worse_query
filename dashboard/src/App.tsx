@@ -69,7 +69,7 @@ export default function App() {
 
     let active = true;
     setDataLoading(true);
-    void repository.load().then(() => {
+    void repository.refresh().then(() => {
       if (!active) return;
       setDataError("");
       setDataLoading(false);
