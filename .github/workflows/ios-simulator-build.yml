@@ -1,0 +1,64 @@
+name: iOS Simulator Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ios-security-lab
+    paths:
+      - 'ios-security-lab/**'
+      - '.github/workflows/ios-simulator-build.yml'
+
+jobs:
+  build-simulator:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: List project schemes
+        working-directory: ios-security-lab
+        run: xcodebuild -list -project IOSSecurityLab.xcodeproj
+
+      - name: Build WriterApp for iOS Simulator
+        working-directory: ios-security-lab
+        run: |
+          xcodebuild \
+            -project IOSSecurityLab.xcodeproj \
+            -scheme WriterApp \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/WriterDerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Build VerifierApp for iOS Simulator
+        working-directory: ios-security-lab
+        run: |
+          xcodebuild \
+            -project IOSSecurityLab.xcodeproj \
+            -scheme VerifierApp \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/VerifierDerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Package simulator build outputs
+        if: success()
+        run: |
+          mkdir -p "$RUNNER_TEMP/ios-simulator-builds"
+          ditto "$RUNNER_TEMP/WriterDerivedData/Build/Products/Debug-iphonesimulator/WriterApp.app" "$RUNNER_TEMP/ios-simulator-builds/WriterApp.app"
+          ditto "$RUNNER_TEMP/VerifierDerivedData/Build/Products/Debug-iphonesimulator/VerifierApp.app" "$RUNNER_TEMP/ios-simulator-builds/VerifierApp.app"
+          cd "$RUNNER_TEMP"
+          zip -r ios-simulator-builds.zip ios-simulator-builds
+
+      - name: Upload simulator build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-builds
+          path: ${{ runner.temp }}/ios-simulator-builds.zip
+          retention-days: 7
