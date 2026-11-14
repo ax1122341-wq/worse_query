@@ -130,8 +130,11 @@ final class SupabaseCloudSync {
             run_id: record.runId,
             record: record
         )
+        guard let restURL = URL(string: LabConfiguration.supabaseURL + "/rest/v1/lab_runs") else {
+            throw LabCloudSyncError.invalidURL
+        }
         var components = URLComponents(
-            url: URL(string: LabConfiguration.supabaseURL + "/rest/v1/lab_runs")!,
+            url: restURL,
             resolvingAgainstBaseURL: false
         )
         components?.queryItems = [
