@@ -50,3 +50,12 @@ A free Personal Team is useful for basic Xcode device testing, but it does not g
 4. Optionally export the Verifier's synthetic run JSON through the system share sheet and import it explicitly into the separate dashboard.
 
 The dashboard does not connect to the apps or receive data automatically.
+
+
+## Optional authenticated cloud sync
+
+Lab Verifier can connect directly to the SECURITY LAB Supabase project after a user signs in with their own existing email/password account. After the first successful connection, the app stores only the refreshable access session in the iOS Keychain; it does not store the password. Later verification results are uploaded automatically while the session remains valid. A user can also manually sync the most recent result or sign out.
+
+The native client contains only the public Supabase publishable key. Every upload includes the signed-in user's JWT and that user's ID; PostgreSQL Row Level Security checks the owner ID. The upload is idempotent on `(owner_id, run_id)`, so importing the same run again does not create duplicate rows.
+
+This sync applies only to the synthetic JSON file the user explicitly selects in Lab Verifier and the result derived from that verification. It does not read other apps' private storage, device identifiers, or protected iOS containers. Email/password entry occurs only in the native app; never share the password or a verification code in chat.
