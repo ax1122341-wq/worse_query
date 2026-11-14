@@ -10,6 +10,10 @@ on:
       - 'ios-security-lab/**'
       - '.github/workflows/ios-simulator-build.yml'
 
+permissions:
+  contents: read
+  statuses: write
+
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
@@ -131,3 +135,24 @@ jobs:
           name: ios-security-lab-test-results
           path: ${{ runner.temp }}/IOSSecurityLabTests.xcresult
           retention-days: 7
+
+      - name: Publish iOS build status to the commit
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_RESULT: ${{ job.status }}
+        run: |
+          if [ "$BUILD_RESULT" = "success" ]; then
+            STATE="success"
+            DESCRIPTION="iOS build and simulator tests passed"
+          elif [ "$BUILD_RESULT" = "cancelled" ]; then
+            STATE="error"
+            DESCRIPTION="iOS build was cancelled"
+          else
+            STATE="failure"
+            DESCRIPTION="iOS build or simulator tests failed"
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" \
+            -f state="$STATE" \
+            -f context="iOS Simulator Build" \
+            -f description="$DESCRIPTION"
