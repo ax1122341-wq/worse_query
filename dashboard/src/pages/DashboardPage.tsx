@@ -1,7 +1,8 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AdvancedFilters } from "../components/AdvancedFilters";
 import { RunTable } from "../components/RunTable";
 import { SearchControl } from "../components/SearchControl";
+import { TrendChart } from "../components/TrendChart";
 import { exportRuns } from "../lib/exportRuns";
 import { filterRuns } from "../lib/filterRuns";
 import { parseRunEnvelope } from "../lib/importRunJson";
@@ -33,6 +34,8 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
   const [advancedOpen, setAdvancedOpen] = useState(true);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const fileInput = useRef<HTMLInputElement>(null);
   const records = repository.list();
   const cloudRecords = records.filter(({ loadedFrom }) => loadedFrom === "json-import");
@@ -47,6 +50,19 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
     [records],
   );
   const filteredRecords = useMemo(() => filterRuns(records, filters), [records, filters]);
+  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / pageSize));
+  const visibleRecords = useMemo(
+    () => filteredRecords.slice((page - 1) * pageSize, page * pageSize),
+    [filteredRecords, page, pageSize],
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [filters, pageSize]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   const resetFilters = () => {
     setFilters(initialFilters);
@@ -206,9 +222,11 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
           <article className="stat-card"><span>ERROR</span><strong>{records.filter(({ record }) => record.status === "ERROR").length}</strong><small><span className="stat-dot red" />测试或环境错误</small></article>
         </section>
 
+        <TrendChart records={records} />
+
         <section className="records-panel">
           <div className="records-panel-heading">
-            <div><h2>全部记录 <span className="count-badge">{filteredRecords.length}</span></h2><p>每条时间线展示结构化事件；当前筛选结果 {filteredRecords.length} 条。</p></div>
+            <div><h2>全部记录 <span className="count-badge">{filteredRecords.length}</span></h2><p>当前筛选共 {filteredRecords.length} 条记录，按筛选结果分页显示。</p></div>
             <button aria-expanded={advancedOpen} className="button button-quiet" onClick={() => setAdvancedOpen(!advancedOpen)} type="button">
               <span aria-hidden="true">☷</span>{advancedOpen ? "收起高级筛选" : "高级筛选"}
             </button>
@@ -221,7 +239,30 @@ export function DashboardPage({ repository, refresh, userEmail, onSignOut }: Das
           {advancedOpen && (
             <AdvancedFilters browsers={browsers} filters={filters} onChange={setFilters} onReset={resetFilters} channels={channels} />
           )}
-          <RunTable records={filteredRecords} onDeleteImported={(runId) => void deleteOneImported(runId)} />
+          <RunTable records={visibleRecords} onDeleteImported={(runId) => void deleteOneImported(runId)} />
+          <div className="pagination-bar">
+            <span className="pagination-summary">
+              {filteredRecords.length === 0
+                ? "没有可显示的记录"
+                : "显示第 " + ((page - 1) * pageSize + 1) + "–" + Math.min(page * pageSize, filteredRecords.length) + " 条，共 " + filteredRecords.length + " 条"}
+            </span>
+            <div className="pagination-controls">
+              <label className="page-size-control">
+                每页
+                <select value={pageSize} onChange={(event) => setPageSize(Number(event.target.value))}>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+                条
+              </label>
+              <button className="button button-quiet" disabled={page <= 1} onClick={() => setPage(1)} type="button">首页</button>
+              <button className="button button-quiet" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))} type="button">上一页</button>
+              <span className="page-indicator">{page} / {totalPages}</span>
+              <button className="button button-quiet" disabled={page >= totalPages} onClick={() => setPage((value) => Math.min(totalPages, value + 1))} type="button">下一页</button>
+              <button className="button button-quiet" disabled={page >= totalPages} onClick={() => setPage(totalPages)} type="button">末页</button>
+            </div>
+          </div>
         </section>
         <footer className="page-footer"><span>iOS Security Lab</span><span>合成 App Group 测试数据展示 · Supabase 云端持久化</span></footer>
       </section>
