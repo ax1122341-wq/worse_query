@@ -1,6 +1,5 @@
 -- SECURITY LAB Dashboard: Supabase persistence
--- Run this in Supabase SQL Editor after creating a project.
--- Access is restricted to authenticated users; do not add public/anon policies.
+-- Each authenticated account can read, insert, and delete only its own rows.
 
 create table if not exists public.lab_runs (
   id uuid primary key default gen_random_uuid(),
@@ -17,23 +16,23 @@ create index if not exists lab_runs_owner_created_at_idx
 
 alter table public.lab_runs enable row level security;
 
+grant select, insert, delete on table public.lab_runs to authenticated;
+revoke all on table public.lab_runs from anon;
+
 drop policy if exists "Users can read their own lab runs" on public.lab_runs;
 create policy "Users can read their own lab runs"
-  on public.lab_runs for select
-  to authenticated
-  using (auth.uid() = owner_id);
+  on public.lab_runs for select to authenticated
+  using ((select auth.uid()) = owner_id);
 
 drop policy if exists "Users can insert their own lab runs" on public.lab_runs;
 create policy "Users can insert their own lab runs"
-  on public.lab_runs for insert
-  to authenticated
-  with check (auth.uid() = owner_id);
+  on public.lab_runs for insert to authenticated
+  with check ((select auth.uid()) = owner_id);
 
 drop policy if exists "Users can delete their own lab runs" on public.lab_runs;
 create policy "Users can delete their own lab runs"
-  on public.lab_runs for delete
-  to authenticated
-  using (auth.uid() = owner_id);
+  on public.lab_runs for delete to authenticated
+  using ((select auth.uid()) = owner_id);
 
 comment on table public.lab_runs is
   'Synthetic iOS Security Lab test records. Each authenticated user can access only their own rows.';
