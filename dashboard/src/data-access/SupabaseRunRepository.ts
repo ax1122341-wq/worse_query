@@ -24,7 +24,7 @@ export class SupabaseRunRepository implements RunRepository {
     return [...this.demos, ...this.imported];
   }
 
-  async load(): Promise<void> {
+  async refresh(): Promise<void> {
     const { data, error } = await this.client
       .from("lab_runs")
       .select("run_id, record")
@@ -32,7 +32,7 @@ export class SupabaseRunRepository implements RunRepository {
       .order("created_at", { ascending: false });
 
     if (error) {
-      throw new Error(`读取 Supabase 记录失败：${error.message}`);
+      throw new Error("读取 Supabase 记录失败：" + error.message);
     }
 
     const rows = (data ?? []) as unknown as StoredRunRow[];
@@ -57,7 +57,7 @@ export class SupabaseRunRepository implements RunRepository {
 
     for (const record of records) {
       if (knownIds.has(record.runId) || incomingIds.has(record.runId)) {
-        throw new Error(`重复的测试记录 ID：${record.runId}`);
+        throw new Error("重复的测试记录 ID：" + record.runId);
       }
       incomingIds.add(record.runId);
     }
@@ -70,16 +70,24 @@ export class SupabaseRunRepository implements RunRepository {
 
     const { error } = await this.client.from("lab_runs").insert(rows);
     if (error) {
-      throw new Error(`保存到 Supabase 失败：${error.message}`);
+      throw new Error("保存到 Supabase 失败：" + error.message);
     }
 
-    this.imported = [
-      ...this.imported,
-      ...records.map((record) => ({
-        record,
-        loadedFrom: "json-import" as const,
-      })),
-    ];
+    await this.refresh();
+  }
+
+  async deleteImported(runId: string): Promise<void> {
+    const { error } = await this.client
+      .from("lab_runs")
+      .delete()
+      .eq("owner_id", this.ownerId)
+      .eq("run_id", runId);
+
+    if (error) {
+      throw new Error("删除云端记录失败：" + error.message);
+    }
+
+    this.imported = this.imported.filter(({ record }) => record.runId !== runId);
   }
 
   async clearImported(): Promise<void> {
@@ -89,7 +97,7 @@ export class SupabaseRunRepository implements RunRepository {
       .eq("owner_id", this.ownerId);
 
     if (error) {
-      throw new Error(`清除云端导入记录失败：${error.message}`);
+      throw new Error("清除云端导入记录失败：" + error.message);
     }
     this.imported = [];
   }
