@@ -18,9 +18,9 @@ npm run preview
 
 ## Data and privacy
 
-The initial rows in `src/data/demo-runs.json` are synthetic demonstration records. JSON imports are validated against `src/data/lab-run-v1.schema.json` and kept in memory only. They are lost when the page is refreshed or closed. Export downloads a JSON file locally. There is no backend, database, telemetry, browser detection, device fingerprinting, or automatic data upload.
+The initial rows in `src/data/demo-runs.json` are synthetic demonstration records. JSON imports are validated against `src/data/lab-run-v1.schema.json` and saved in the current browser's localStorage under a versioned application key. Imported records survive page refreshes in the same browser and origin. Clearing site data, changing browsers/origins, or disabling browser storage can remove or prevent persistence. Export downloads a JSON file locally. There is no backend, database, telemetry, browser detection, device fingerprinting, or automatic data upload.
 
-An imported record's source marker describes its declared provenance; it does not verify authenticity.
+The optional `fingerprint` property is displayed only when supplied in imported JSON. It is never generated, inferred, or collected from a device. Older schema-version-1 exports without this optional property remain importable. An imported record's source marker describes its declared provenance; it does not verify authenticity.
 
 Result statuses are explicit: **PASS** means the authorized App Group read succeeded and its marker matched; **DENIED** is reserved for unavailable App Group authorization or an explicit permission-denied read; **ERROR** covers missing fixtures, marker mismatches, malformed records, and unrelated test or environment errors.
 

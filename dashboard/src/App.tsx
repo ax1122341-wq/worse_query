@@ -1,16 +1,25 @@
 import { useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import demoEnvelope from "./data/demo-runs.json";
-import { MemoryRunRepository } from "./data-access/MemoryRunRepository";
+import { LocalStorageRunRepository } from "./data-access/MemoryRunRepository";
 import { parseRunEnvelope } from "./lib/importRunJson";
 import { DashboardPage } from "./pages/DashboardPage";
 import { RunDetailsPage } from "./pages/RunDetailsPage";
 
+function getBrowserStorage(): Storage | null {
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 export default function App() {
   const [repository] = useState(
     () =>
-      new MemoryRunRepository(
+      new LocalStorageRunRepository(
         parseRunEnvelope(JSON.stringify(demoEnvelope)).records,
+        getBrowserStorage(),
       ),
   );
   const [, setRevision] = useState(0);

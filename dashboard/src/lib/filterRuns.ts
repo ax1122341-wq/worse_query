@@ -7,26 +7,14 @@ export function filterRuns(
   const query = filters.query.trim().toLocaleLowerCase();
 
   return records.filter(({ record }) => {
-    if (filters.recordType !== "all" && record.recordType !== filters.recordType) {
-      return false;
-    }
+    if (filters.recordType !== "all" && record.recordType !== filters.recordType) return false;
     if (filters.status !== "all" && record.status !== filters.status) return false;
     if (filters.browser && record.browser !== filters.browser) return false;
     if (filters.channel && record.channel !== filters.channel) return false;
-    if (filters.fromDate && record.firstVisit < filters.fromDate) return false;
+    if (filters.fromDate && record.firstVisit.slice(0, 10) < filters.fromDate) return false;
     if (filters.toDate && record.firstVisit.slice(0, 10) > filters.toDate) return false;
-    if (
-      filters.minDuration &&
-      record.durationMs < Number(filters.minDuration)
-    ) {
-      return false;
-    }
-    if (
-      filters.maxDuration &&
-      record.durationMs > Number(filters.maxDuration)
-    ) {
-      return false;
-    }
+    if (filters.minDuration && record.durationMs < Number(filters.minDuration)) return false;
+    if (filters.maxDuration && record.durationMs > Number(filters.maxDuration)) return false;
     if (!query) return true;
 
     const searchable = [
@@ -34,14 +22,9 @@ export function filterRuns(
       record.browser ?? "",
       record.channel,
       record.anonymousId,
-      ...record.events.flatMap((event) => [
-        event.action,
-        event.details,
-        event.role,
-      ]),
-    ]
-      .join(" ")
-      .toLocaleLowerCase();
+      record.fingerprint ?? "",
+      ...record.events.flatMap((event) => [event.action, event.details, event.role]),
+    ].join(" ").toLocaleLowerCase();
 
     return searchable.includes(query);
   });

@@ -20,6 +20,7 @@ export interface RunRecord {
   browser: string | null;
   channel: string;
   anonymousId: string;
+  fingerprint: string | null;
   durationMs: number;
   firstVisit: string;
   events: LabEvent[];

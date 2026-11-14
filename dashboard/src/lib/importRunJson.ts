@@ -50,6 +50,9 @@ function parseRecord(value: unknown, index: number): RunRecord {
     value.channel.length === 0 ||
     typeof value.anonymousId !== "string" ||
     value.anonymousId.length === 0 ||
+    (value.fingerprint !== undefined &&
+      value.fingerprint !== null &&
+      typeof value.fingerprint !== "string") ||
     !Number.isInteger(value.durationMs) ||
     Number(value.durationMs) < 0 ||
     !isIsoDate(value.firstVisit) ||
@@ -74,6 +77,7 @@ function parseRecord(value: unknown, index: number): RunRecord {
     browser: value.browser,
     channel: value.channel,
     anonymousId: value.anonymousId,
+    fingerprint: typeof value.fingerprint === "string" ? value.fingerprint : null,
     durationMs: Number(value.durationMs),
     firstVisit: value.firstVisit,
     events: value.events.map(parseEvent),
