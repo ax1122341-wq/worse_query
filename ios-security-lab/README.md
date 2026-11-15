@@ -1,61 +1,47 @@
 # iOS Security Lab
 
-This is a separate, safe App Group permission test project. It does not import, link, or execute any source from `worse_query`.
+Two small iOS apps demonstrate a safe, user-directed JSON handoff. They do not import, link, or execute code from the separate `worse_query` project.
 
-## Apps
+## Current app flow
 
-- **Lab Writer** writes a single synthetic JSON fixture with a fixed filename into the lab App Group container.
-- **Lab Verifier** reads that known fixture through its own matching App Group entitlement and checks the expected marker.
-- Both apps expose an explicit reset action. Lab Verifier displays and can export its completed result as JSON. Exported run records use schema version 1, compatible with `dashboard/src/data/lab-run-v1.schema.json`.
+- **Lab Writer** creates a new synthetic JSON fixture with a random run ID in the app's temporary directory. The user exports it using the iOS share sheet and saves it to Files.
+- **Lab Verifier** lets the user explicitly select a JSON file with the iOS document picker, validates the schema version and fixed synthetic marker, then creates a version-1 verification record.
+- The Verifier can export that record as JSON for manual import into the Dashboard. The same record can also be uploaded directly to Supabase after the user signs in to the existing Dashboard account.
 
-The test uses the public `FileManager.containerURL(forSecurityApplicationGroupIdentifier:)` API. It does not enumerate other containers or access paths outside the authorized App Group.
+The current user interface uses the system share sheet and document picker. It does not scan folders or access another app's private container. The older `AppGroupStore` helper remains in the project as a separate, unused sample and is not required for the current file-based flow.
 
 ## Result statuses
 
-- **PASS** means Verifier read the authorized App Group fixture and its marker matched.
-- **DENIED** is reserved for an unavailable App Group authorization/container or an explicit permission-denied read.
-- **ERROR** covers a missing fixture, malformed data, marker mismatch, and other test or environment errors. These are not reported as authorization denials.
+- **PASS** means the user-selected synthetic JSON has the expected version and marker.
+- **DENIED** is reserved for an explicitly unavailable authorization/container.
+- **ERROR** covers missing, malformed, mismatched, or unreadable test data and other test/environment errors.
 
-The exported JSON envelope has `schemaVersion: 1`; run completion and event timestamps use ISO 8601.
-
-## Signing and Apple account prerequisites
-
-The repository intentionally uses placeholders:
-- App Group: `group.com.example.ios-security-lab`
-- Writer bundle ID: `com.example.ios-security-lab.writer`
-- Verifier bundle ID: `com.example.ios-security-lab.verifier`
-
-These are examples, not registered identifiers. Before a physical-device installation:
-
-1. Use an Apple Developer team that is eligible to register and provision the App Groups capability.
-2. Register one App Group identifier for that team in Certificates, Identifiers & Profiles.
-3. Register both app identifiers under the same team and enable the same App Groups capability for each.
-4. Replace the placeholder App Group identifier consistently in `Shared/LabConfiguration.swift` and both `.entitlements` files. Replace the example bundle identifiers in the two app targets with identifiers registered to that team.
-5. Sign both targets with that same team and valid provisioning profiles, then install both apps on the same supported iPhone.
-
-A free Personal Team is useful for basic Xcode device testing, but it does not guarantee access to every advanced capability. If the App Groups capability cannot be enabled for the team, this two-app test cannot be completed on a physical iPhone with that team. Do not try to work around Apple's entitlement checks.
-
-## Build artifact limitations
-
-- The GitHub Actions simulator `.app` output is for an iOS simulator, not a physical iPhone.
-- The generic iOS device build is unsigned validation output; it is not an installable IPA.
-- A successful compile or simulator test does not prove that the Apple team has granted the App Groups entitlement.
-- This repository does not contain Apple account credentials, signing certificates, private keys, or provisioning profiles. Never paste Apple passwords, verification codes, or private signing keys into chat or commit them to the repository.
-
-## Test flow
-
-1. Launch Lab Writer and select **写入合成测试文件**.
-2. Launch Lab Verifier and select **读取并验证合成文件**.
-3. Use either app's reset action to remove the one fixed test file.
-4. Optionally export the Verifier's synthetic run JSON through the system share sheet and import it explicitly into the separate dashboard.
-
-The dashboard does not connect to the apps or receive data automatically.
-
+The exported JSON envelope has `schemaVersion: 1`; timestamps use ISO 8601. Dashboard imports validate this schema before saving records.
 
 ## Optional authenticated cloud sync
 
-Lab Verifier can connect directly to the SECURITY LAB Supabase project after a user signs in with their own existing email/password account. After the first successful connection, the app stores only the refreshable access session in the iOS Keychain; it does not store the password. Later verification results are uploaded automatically while the session remains valid. A user can also manually sync the most recent result or sign out.
+Open **Lab Verifier → Supabase 云端同步** and sign in using the same Supabase email/password account used by SECURITY LAB Dashboard. The password is sent directly to Supabase Auth over HTTPS; it is not stored by the app. After a successful sign-in:
 
-The native client contains only the public Supabase publishable key. Every upload includes the signed-in user's JWT and that user's ID; PostgreSQL Row Level Security checks the owner ID. The upload is idempotent on `(owner_id, run_id)`, so importing the same run again does not create duplicate rows.
+- The session is saved in the iOS Keychain, using device-only accessibility.
+- The Verifier automatically uploads each subsequent verification result.
+- A refresh token is used to renew an expired access token.
+- A manual retry is available for the most recent result if an upload fails.
+- Sign-out attempts to revoke the remote session and clears the local Keychain session.
 
-This sync applies only to the synthetic JSON file the user explicitly selects in Lab Verifier and the result derived from that verification. It does not read other apps' private storage, device identifiers, or protected iOS containers. Email/password entry occurs only in the native app; never share the password or a verification code in chat.
+The native app contains only the public Supabase publishable key. Each upload also carries the signed-in user's JWT and owner ID; PostgreSQL Row Level Security restricts rows to that authenticated user. Inserts are idempotent for the same `(owner_id, run_id)` pair. Do not put a Supabase secret or service-role key in an iOS app.
+
+The sync only sends the synthetic result derived from the JSON file the user explicitly selected. It does not collect device identifiers, inspect other apps' data, or access protected iOS containers. Never share the account password, access token, refresh token, or verification code in chat.
+
+## Build and signing
+
+GitHub Actions builds unsigned device IPA files and runs the iOS Simulator unit tests. The generated IPA files are not signed and must be signed on the user's own computer using their own Apple account. The app targets use example bundle IDs; replace these with bundle identifiers registered to the signing team before creating a long-lived personal build.
+
+The current file-based workflow does not require the App Groups entitlement. The project retains an unused example App Group helper, but the two visible app flows do not call it. Do not attempt to bypass Apple's entitlement or provisioning checks.
+
+## Test flow
+
+1. Launch Lab Writer and generate a synthetic JSON file.
+2. Save it to the iOS Files app through the share sheet.
+3. Launch Lab Verifier and select that file through the document picker.
+4. Optionally connect the existing Dashboard account in the Verifier's Supabase section to enable automatic upload of future verification results.
+5. Alternatively, export the verification result JSON and import it manually through Dashboard's **导入 JSON** button.
