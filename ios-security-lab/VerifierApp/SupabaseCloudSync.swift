@@ -98,7 +98,27 @@ final class SupabaseCloudSync {
         return session
     }
 
-    func signOut() throws {
+    /// Revokes the server-side refresh session when reachable, then always clears
+    /// the local Keychain copy so the user is signed out on this device.
+    func signOut() async throws {
+        var revokeError: Error?
+
+        if let saved = try? savedSession() {
+            do {
+                var session = saved
+                if session.expiresAt <= Date().addingTimeInterval(60) {
+                    session = try await requestAuth(
+                        path: "/auth/v1/token?grant_type=refresh_token",
+                        body: ["refresh_token": session.refreshToken]
+                    )
+                    try store(session)
+                }
+                try await revoke(session)
+            } catch {
+                revokeError = error
+            }
+        }
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: keychainService,
@@ -107,6 +127,30 @@ final class SupabaseCloudSync {
         let status = SecItemDelete(query as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {
             throw LabCloudSyncError.keychain(status)
+        }
+
+        if let revokeError {
+            throw revokeError
+        }
+    }
+
+    private func revoke(_ session: LabCloudSession) async throws {
+        guard let url = URL(string: LabConfiguration.supabaseURL + "/auth/v1/logout") else {
+            throw LabCloudSyncError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(LabConfiguration.supabasePublishableKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \\(session.accessToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw LabCloudSyncError.invalidResponse
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            let detail = String(data: data, encoding: .utf8) ?? "请稍后重试。"
+            throw LabCloudSyncError.httpError(http.statusCode, detail)
         }
     }
 
