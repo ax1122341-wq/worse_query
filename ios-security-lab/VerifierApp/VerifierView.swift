@@ -147,13 +147,17 @@ struct VerifierView: View {
     }
 
     private func disconnectCloud() {
-        do {
-            try cloudSync.signOut()
+        cloudBusy = true
+        Task {
+            do {
+                try await cloudSync.signOut()
+                cloudStatus = "已退出云端账户；本地验证记录和导出文件不会被删除。"
+            } catch {
+                cloudStatus = "本机登录状态已清除，但 Supabase 服务端会话撤销未能确认：\\(error.localizedDescription)"
+            }
             cloudConnected = false
             cloudPassword = ""
-            cloudStatus = "已退出云端账户；本地验证记录和导出文件不会被删除。"
-        } catch {
-            cloudStatus = "退出云端账户失败：\(error.localizedDescription)"
+            cloudBusy = false
         }
     }
 
